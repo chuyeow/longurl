@@ -32,10 +32,15 @@ module LongURL
   # * LongURL::NetworkError : a network (timeout, host could be reached, ...) error occurs
   # * LongURL::UnknownError : an unknown error occurs
   class Expander
+
+    attr_accessor :supported_services_only
+
     # Initialize a new Expander.
     # === Options
     # * <tt>:cache</tt>: define a cache which Expander can use.
-    #   It must implements [] and []= methods. It can be disabled using false.
+    #   It must implement [] and []= methods. It can be disabled using false.
+    # * <tt>:supported_services_only</tt>: If true, only attempts to expand URLs that are listed as supported by
+    #   LongURL.org's API. Defaults to false.
     def initialize(options = {})
       # OPTIMIZE : This code is a complete duplicate of cache handling in service.
       if options[:cache].nil?
@@ -45,14 +50,18 @@ module LongURL
       else
         @@cache = options[:cache]
       end
+
+      @supported_services_only = options[:supported_services_only]
+
       @@service = Service.new(:cache => @@cache)
     end
     
-    # Expand given url using LongURL::Service class first and then try a direct_resolution.
+    # Expand given url using LongURL::Service.
+    # If it's not a supported URL, a direct_resolution is attempted unless supported_services_only is true.
     def expand(url)
       @@service.query_supported_service_only url
     rescue UnsupportedService
-      direct_resolution url
+      supported_services_only ? url : direct_resolution(url)
     end
     
     # Try to directly resolve url using LongURL::Direct to get final redirection.

@@ -9,6 +9,8 @@ module LongURL
     # Then, it will try to direct follow redirections on the given url and returns final one.
     # === Options
     # * <tt>:cache</tt> : cache object to use, must implement [] and []= functions.
+    # * <tt>:supported_services_only</tt>: If true, only attempts to expand URLs that are listed as supported by
+    #   LongURL.org's API. Defaults to false.
     # === Types
     # <tt>url</tt> is expected to be a String and returns a String with the url.
     # === Examples
@@ -25,7 +27,10 @@ module LongURL
     # * LongURL::NetworkError : a network (timeout, host could be reached, ...) error occurs
     # * LongURL::UnknownError : an unknown error occurs
     def expand(url, options = {})
-      @@expander ||= Expander.new(:cache => options[:cache])
+      @@expander ||= Expander.new(
+        :cache => options[:cache],
+        :supported_services_only => options[:supported_services_only]
+      )
       @@expander.expand(url)
     end
   end
