@@ -7,10 +7,13 @@ Then, it will try to direct follow redirections on the given url and returns fin
 
 == SYNOPSIS
 === Options
-* <tt>:cache</tt> : cache object to use, must implement [] and []= functions.
+* <tt>:cache</tt>: cache object to use, must implement [] and []= functions.
+* <tt>:supported_services_only</tt>: If true, only attempts to expand URLs that are listed as supported by
+LongURL.org's API. Defaults to false.
 
 === Types
 <tt>url</tt> is expected to be a String and returns a String with the url.
+
 
 === Examples
   # simple expands
